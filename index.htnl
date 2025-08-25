@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuBo Beach - Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0F172A;
+            --secondary: #1E293B;
+            --accent: #C89B4E;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --info: #3B82F6;
+            --surface: #FFFFFF;
+            --surface-secondary: #F8FAFC;
+            --surface-tertiary: #F1F5F9;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --text-primary: #0F172A;
+            --text-secondary: #64748B;
+            --text-muted: #94A3B8;
+            --text-inverse: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #D4A853);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(200, 155, 78, 0.2);
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(200, 155, 78, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-secondary);
+            border-color: var(--accent);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+            background: var(--surface);
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(200, 155, 78, 0.1);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 40;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin: 4px 0;
+        }
+
+        .nav-link:hover {
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--accent), #D4A853);
+            color: white;
+            box-shadow: 0 4px 12px rgba(200, 155, 78, 0.2);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .metric-card-large {
+            background: linear-gradient(135deg, var(--accent), #D4A853);
+            color: white;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            height: 400px;
+        }
+
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: var(--surface-secondary);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 18px;
+        }
+
+        .activity-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .activity-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .activity-icon.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .badge-vip {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--accent);
+        }
+
+        .time-display {
+            font-family: 'Inter', monospace;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .weather-widget {
+            background: linear-gradient(135deg, #0EA5E9, #0284C7);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .weather-temp {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+
+        .daybed {
+            width: 64px;
+            height: 96px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        .daybed.available {
+            background: 
+                radial-gradient(ellipse at top, rgba(255, 255, 255, 0.3) 0%, transparent 70%),
+                linear-gradient(135deg, var(--accent), #D4A853, #B8943F);
+            color: white;
+            box-shadow: 
+                0 8px 24px rgba(200, 155, 78, 0.25),
+                0 4px 12px rgba(200, 155, 78, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .daybed.reserved {
+            background: 
+                linear-gradient(135deg, #64748B, #475569, #334155);
+            color: rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 8px 24px rgba(100, 116, 139, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .daybed.vip {
+            background: 
+                linear-gradient(135deg, var(--primary), var(--secondary), #0F172A);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: 
+                0 12px 32px rgba(15, 23, 42, 0.4),
+                0 6px 16px rgba(200, 155, 78, 0.2);
+        }
+
+        .daybed.walk-in {
+            background: 
+                linear-gradient(135deg, #3B82F6, #2563EB, #1D4ED8);
+            color: white;
+            box-shadow: 
+                0 8px 24px rgba(59, 130, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .daybed:hover {
+            transform: scale(1.08) translateY(-4px);
+            z-index: 10;
+        }
+
+        .daybed.selected {
+            border: 2px solid var(--success);
+            box-shadow: 
+                0 0 0 4px rgba(16, 185, 129, 0.15),
+                0 16px 40px rgba(16, 185, 129, 0.2);
+            transform: scale(1.1) translateY(-6px);
+        }
+
+        .floor-plan {
+            position: relative;
+            width: 100%;
+            height: 700px;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(200, 155, 78, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.03) 0%, transparent 50%),
+                linear-gradient(135deg, #FEFEFE, #F8FAFC);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .pool {
+            background: 
+                radial-gradient(ellipse at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%),
+                linear-gradient(135deg, #0EA5E9, #0284C7, #0369A1);
+            border-radius: 32px;
+            box-shadow: 
+                inset 0 8px 32px rgba(14, 165, 233, 0.3),
+                0 8px 24px rgba(14, 165, 233, 0.15);
+            position: absolute;
+            left: 35%;
+            top: 20%;
+            width: 30%;
+            height: 45%;
+        }
+
+        .deck {
+            background: 
+                linear-gradient(135deg, 
+                    rgba(245, 242, 235, 0.9) 0%,
+                    rgba(229, 224, 213, 0.8) 50%,
+                    rgba(212, 205, 190, 0.7) 100%
+                );
+            border-radius: 20px;
+            position: absolute;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(15, 23, 42, 0.95) 0%, 
+                    rgba(30, 41, 59, 0.95) 100%
+                );
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transform: translateY(12px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            min-width: 240px;
+            backdrop-filter: blur(24px);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .settings-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .settings-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .settings-header:hover {
+            background: var(--surface-secondary);
+        }
+
+        .settings-content {
+            padding: 24px;
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        .heatmap-container {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin: 20px 0;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-2px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .daybed.available::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .floor-plan {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="p-6">
+            <div class="text-2xl font-bold mb-8" style="color: var(--accent);">BuBo Beach</div>
+            
+            <nav class="space-y-2">
+                <a href="#" class="nav-link active" data-page="dashboard">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                    </svg>
+                    Dashboard
+                </a>
+                
+                <a href="#" class="nav-link" data-page="reservations">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Reservations
+                </a>
+                
+                <a href="#" class="nav-link" data-page="analytics">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Analytics
+                </a>
+                
+                <a href="#" class="nav-link" data-page="settings">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+        </div>
+        
+        <div class="p-6 border-t border-gray-200 mt-auto">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    JD
+                </div>
+                <div>
+                    <div class="font-semibold text-sm">John Doe</div>
+                    <div class="text-xs text-gray-500">Manager</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button class="btn-ghost p-2 md:hidden" id="sidebarToggle">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 class="text-xl font-semibold" id="pageTitle">Dashboard</h1>
+                        <p class="text-sm text-gray-500" id="pageSubtitle">Welcome to BuBo Beach Management</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Current Time</div>
+                        <div id="currentTime" class="time-display"></div>
+                    </div>
+                    <button class="btn-secondary px-4 py-2">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
+                        </svg>
+                        Export
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Page -->
+        <div class="page-section active" id="dashboard">
+            <div class="p-6">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="metric-card-large">
+                        <div class="text-4xl font-bold mb-2" id="totalRevenue">€12,450</div>
+                        <div class="text-sm opacity-90">Today's Revenue</div>
+                        <div class="text-xs opacity-70 mt-1">+15% vs yesterday</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm font-medium text-gray-500">Occupancy Rate</div>
+                            <div class="badge badge-success">+8%</div>
+                        </div>
+                        <div class="text-3xl font-bold text-green-600" id="occupancyRate">78%</div>
+                        <div class="text-sm text-gray-500">24 of 31 beds occupied</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm font-medium text-gray-500">Active Reservations</div>
+                            <div class="badge badge-info">Live</div>
+                        </div>
+                        <div class="text-3xl font-bold text-blue-600" id="activeReservations">24</div>
+                        <div class="text-sm text-gray-500">7 VIP, 17 Standard</div>
+                    </div>
+                    
+                    <div class="weather-widget">
+                        <div class="text-lg font-semibold">☀️ Sunny</div>
+                        <div class="weather-temp">28°C</div>
+                        <div class="text-sm opacity-90">Perfect beach day</div>
+                        <div class="text-xs opacity-70 mt-2">UV Index: 8 (High)</div>
+                    </div>
+                </div>
+
+                <!-- Charts and Activity -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Revenue Chart -->
+                    <div class="chart-container">
+                        <h3 class="text-lg font-semibold mb-4">Revenue Trend (7 days)</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    
+                    <!-- Activity Feed -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+                        <div class="activity-feed">
+                            <div class="activity-item">
+                                <div class="activity-icon success">✓</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">New reservation confirmed</div>
+                                    <div class="text-sm text-gray-500">Bed #12 - Maria García - €95</div>
+                                    <div class="text-xs text-gray-400">2 minutes ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon info">💰</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Payment received</div>
+                                    <div class="text-sm text-gray-500">VIP Bed #17 - €150 via Stripe</div>
+                                    <div class="text-xs text-gray-400">5 minutes ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon warning">⚠️</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Walk-in mode activated</div>
+                                    <div class="text-sm text-gray-500">3 beds available for walk-ins</div>
+                                    <div class="text-xs text-gray-400">13:00</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">🏖️</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Guest checked in</div>
+                                    <div class="text-sm text-gray-500">Bed #8 - Premium service requested</div>
+                                    <div class="text-xs text-gray-400">15 minutes ago</div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon info">📱</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">WhatsApp confirmation sent</div>
+                                    <div class="text-sm text-gray-500">Reservation details to +34 123 456 789</div>
+                                    <div class="text-xs text-gray-400">18 minutes ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staff Panel -->
+                <div class="mt-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Staff Status</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="flex items-center space-x-3 p-4 bg-green-50 rounded-lg">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <div>
+                                    <div class="font-medium">Ana Martínez</div>
+                                    <div class="text-sm text-gray-500">Pool Area - On duty</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3 p-4 bg-green-50 rounded-lg">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <div>
+                                    <div class="font-medium">Carlos López</div>
+                                    <div class="text-sm text-gray-500">West Side - On duty</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <div>
+                                    <div class="font-medium">Sofia Ruiz</div>
+                                    <div class="text-sm text-gray-500">Break - Back at 14:30</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservations Page -->
+        <div class="page-section" id="reservations">
+            <div class="flex h-full">
+                <!-- Reservations Sidebar -->
+                <div class="w-80 bg-white border-r border-gray-200 p-6 space-y-6 overflow-y-auto">
+                    <!-- Metrics Overview -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold">Overview</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="metric-card text-center">
+                                <div class="text-2xl font-bold text-green-600" id="availableCount">24</div>
+                                <div class="text-sm text-gray-500">Available</div>
+                            </div>
+                            <div class="metric-card text-center">
+                                <div class="text-2xl font-bold text-red-600" id="reservedCount">7</div>
+                                <div class="text-sm text-gray-500">Reserved</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Filters</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Date</label>
+                                <input type="date" id="dateFilter" class="form-input">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Zone</label>
+                                <select id="zoneFilter" class="form-input">
+                                    <option value="all">All Zones</option>
+                                    <option value="west">West Side</option>
+                                    <option value="east">East Side</option>
+                                    <option value="pool">Pool Area</option>
+                                    <option value="vip">VIP Area</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Status</label>
+                                <select id="statusFilter" class="form-input">
+                                    <option value="all">All Status</option>
+                                    <option value="available">Available</option>
+                                    <option value="reserved">Reserved</option>
+                                    <option value="walk-in">Walk-in</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Legend</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                                <span class="text-sm">Available</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-gray-500 rounded-full mr-3"></div>
+                                <span class="text-sm">Reserved</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-900 rounded-full mr-3"></div>
+                                <span class="text-sm">VIP Experience</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                <span class="text-sm">Walk-in Available</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selection Summary -->
+                    <div id="selectionSummary" class="glass-card p-6 hidden">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--accent);">Selected Bed</h3>
+                        <div id="summaryContent"></div>
+                    </div>
+
+                    <!-- Reservation Form -->
+                    <div id="reservationForm" class="glass-card p-6 hidden">
+                        <h3 class="text-lg font-semibold mb-4">Complete Reservation</h3>
+                        <form id="quickReservationForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Full Name</label>
+                                <input type="text" required class="form-input" placeholder="Enter full name">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Number of Guests</label>
+                                <select required class="form-input">
+                                    <option value="">Select...</option>
+                                    <option value="1">1 guest</option>
+                                    <option value="2">2 guests</option>
+                                    <option value="3">3 guests</option>
+                                    <option value="4">4 guests</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Phone</label>
+                                <input type="tel" required class="form-input" placeholder="+34 123 456 789">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email</label>
+                                <input type="email" required class="form-input" placeholder="email@example.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-4">Additional Services</label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-3">
+                                        <span class="text-sm">Premium Champagne (+€45)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-3">
+                                        <span class="text-sm">Premium Towels (+€15)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-3">
+                                        <span class="text-sm">Gourmet Menu (+€35)</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="border-t pt-4">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="font-semibold">Total:</span>
+                                    <span id="formTotalPrice" class="text-2xl font-bold" style="color: var(--accent);">€85</span>
+                                </div>
+                                
+                                <button type="submit" class="btn-primary w-full py-3 font-semibold">
+                                    Confirm & Pay
+                                </button>
+                                
+                                <button type="button" onclick="clearSelection()" class="btn-secondary w-full py-2 mt-2">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Floor Plan -->
+                <div class="flex-1 p-6">
+                    <div class="glass-card p-6 h-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h1 class="section-title">Interactive Floor Plan</h1>
+                                <p class="section-subtitle">Select any available bed to make a reservation</p>
+                            </div>
+                        </div>
+                        
+                        <div class="floor-plan" id="floorPlan">
+                            <!-- Pool -->
+                            <div class="pool"></div>
+                            
+                            <!-- West Deck -->
+                            <div class="deck" style="left: 8%; top: 15%; width: 25%; height: 60%;"></div>
+                            
+                            <!-- East Deck -->
+                            <div class="deck" style="left: 67%; top: 15%; width: 25%; height: 60%;"></div>
+
+                            <!-- West Side Daybeds -->
+                            <div class="daybed available" data-bed="1" data-price="85" data-capacity="2" data-zone="west" style="left: 10%; top: 18%;">
+                                <span class="font-bold">01</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="2" data-price="85" data-capacity="2" data-zone="west" style="left: 10%; top: 28%;">
+                                <span class="font-bold">02</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed reserved" data-bed="3" data-price="85" data-capacity="2" data-zone="west" style="left: 10%; top: 38%;">
+                                <span class="font-bold">03</span>
+                                <span class="text-xs opacity-80">Reserved</span>
+                            </div>
+                            <div class="daybed available" data-bed="4" data-price="85" data-capacity="2" data-zone="west" style="left: 10%; top: 48%;">
+                                <span class="font-bold">04</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed walk-in" data-bed="5" data-price="85" data-capacity="2" data-zone="west" style="left: 10%; top: 58%;">
+                                <span class="font-bold">05</span>
+                                <span class="text-xs opacity-80">Walk-in</span>
+                            </div>
+                            
+                            <div class="daybed available" data-bed="6" data-price="85" data-capacity="4" data-zone="west" style="left: 20%; top: 18%;">
+                                <span class="font-bold">06</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="7" data-price="85" data-capacity="4" data-zone="west" style="left: 20%; top: 28%;">
+                                <span class="font-bold">07</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="8" data-price="85" data-capacity="4" data-zone="west" style="left: 20%; top: 38%;">
+                                <span class="font-bold">08</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed reserved" data-bed="9" data-price="85" data-capacity="4" data-zone="west" style="left: 20%; top: 48%;">
+                                <span class="font-bold">09</span>
+                                <span class="text-xs opacity-80">Reserved</span>
+                            </div>
+                            <div class="daybed available" data-bed="10" data-price="85" data-capacity="4" data-zone="west" style="left: 20%; top: 58%;">
+                                <span class="font-bold">10</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+
+                            <!-- Pool Area Daybeds -->
+                            <div class="daybed available" data-bed="11" data-price="95" data-capacity="2" data-zone="pool" style="left: 37%; top: 15%;">
+                                <span class="font-bold">11</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="12" data-price="95" data-capacity="2" data-zone="pool" style="left: 47%; top: 15%;">
+                                <span class="font-bold">12</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="13" data-price="95" data-capacity="2" data-zone="pool" style="left: 57%; top: 15%;">
+                                <span class="font-bold">13</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+
+                            <div class="daybed available" data-bed="14" data-price="95" data-capacity="2" data-zone="pool" style="left: 37%; top: 67%;">
+                                <span class="font-bold">14</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="15" data-price="95" data-capacity="2" data-zone="pool" style="left: 47%; top: 67%;">
+                                <span class="font-bold">15</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed reserved" data-bed="16" data-price="95" data-capacity="2" data-zone="pool" style="left: 57%; top: 67%;">
+                                <span class="font-bold">16</span>
+                                <span class="text-xs opacity-80">Reserved</span>
+                            </div>
+
+                            <!-- VIP Area -->
+                            <div class="daybed vip available" data-bed="17" data-price="150" data-capacity="4" data-zone="vip" data-vip="true" style="left: 42%; top: 35%;">
+                                <span class="font-bold">VIP</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed vip available" data-bed="18" data-price="150" data-capacity="4" data-zone="vip" data-vip="true" style="left: 52%; top: 35%;">
+                                <span class="font-bold">VIP</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+
+                            <!-- East Side Daybeds -->
+                            <div class="daybed available" data-bed="19" data-price="85" data-capacity="2" data-zone="east" style="left: 69%; top: 18%;">
+                                <span class="font-bold">19</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="20" data-price="85" data-capacity="2" data-zone="east" style="left: 69%; top: 28%;">
+                                <span class="font-bold">20</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="21" data-price="85" data-capacity="2" data-zone="east" style="left: 69%; top: 38%;">
+                                <span class="font-bold">21</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="22" data-price="85" data-capacity="2" data-zone="east" style="left: 69%; top: 48%;">
+                                <span class="font-bold">22</span>
+                                <span class="text-xs opacity-80">2 pax</span>
+                            </div>
+                            <div class="daybed reserved" data-bed="23" data-price="85" data-capacity="2" data-zone="east" style="left: 69%; top: 58%;">
+                                <span class="font-bold">23</span>
+                                <span class="text-xs opacity-80">Reserved</span>
+                            </div>
+
+                            <div class="daybed available" data-bed="24" data-price="85" data-capacity="4" data-zone="east" style="left: 79%; top: 18%;">
+                                <span class="font-bold">24</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed available" data-bed="25" data-price="85" data-capacity="4" data-zone="east" style="left: 79%; top: 28%;">
+                                <span class="font-bold">25</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed walk-in" data-bed="26" data-price="85" data-capacity="4" data-zone="east" style="left: 79%; top: 38%;">
+                                <span class="font-bold">26</span>
+                                <span class="text-xs opacity-80">Walk-in</span>
+                            </div>
+                            <div class="daybed available" data-bed="27" data-price="85" data-capacity="4" data-zone="east" style="left: 79%; top: 48%;">
+                                <span class="font-bold">27</span>
+                                <span class="text-xs opacity-80">4 pax</span>
+                            </div>
+                            <div class="daybed reserved" data-bed="28" data-price="85" data-capacity="4" data-zone="east" style="left: 79%; top: 58%;">
+                                <span class="font-bold">28</span>
+                                <span class="text-xs opacity-80">Reserved</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div class="page-section" id="analytics">
+            <div class="p-6">
+                <div class="mb-6">
+                    <h1 class="section-title">Business Analytics</h1>
+                    <p class="section-subtitle">Comprehensive insights and performance metrics</p>
+                </div>
+
+                <!-- Analytics Controls -->
+                <div class="glass-card p-6 mb-6">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Date Range</label>
+                                <select class="form-input" id="analyticsDateRange">
+                                    <option value="7">Last 7 days</option>
+                                    <option value="30">Last 30 days</option>
+                                    <option value="90">Last 3 months</option>
+                                    <option value="365">Last year</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Compare to</label>
+                                <select class="form-input">
+                                    <option>Previous period</option>
+                                    <option>Same period last year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="btn-secondary px-4 py-2">Export PDF</button>
+                            <button class="btn-primary px-4 py-2">Generate Report</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="stats-grid mb-6">
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm font-medium text-gray-500">Total Revenue</div>
+                            <div class="badge badge-success">+23%</div>
+                        </div>
+                        <div class="text-3xl font-bold text-green-600">€87,450</div>
+                        <div class="text-sm text-gray-500">Last 30 days</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm font-medium text-gray-500">Average Daily Revenue</div>
+                            <div class="badge badge-info">€2,915</div>
+                        </div>
+                        <div class="text-3xl font-bold text-blue-600">€2,915</div>
+                        <div class="text-sm text-gray-500">+15% vs last month</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm font-medium text-gray-500">Customer Satisfaction</div>
+                            <div class="badge badge-success">Excellent</div>
+                        </div>
+                        <div class="text-3xl font-bold text-green-600">4.8/5</div>
+                        <div class="text-sm text-gray-500">Based on 156 reviews</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm font-medium text-gray-500">Repeat Customers</div>
+                            <div class="badge badge-warning">+8%</div>
+                        </div>
+                        <div class="text-3xl font-bold text-yellow-600">34%</div>
+                        <div class="text-sm text-gray-500">Customer retention rate</div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Revenue Breakdown -->
+                    <div class="chart-container">
+                        <h3 class="text-lg font-semibold mb-4">Revenue by Zone</h3>
+                        <canvas id="revenueByZoneChart"></canvas>
+                    </div>
+                    
+                    <!-- Occupancy Trends -->
+                    <div class="chart-container">
+                        <h3 class="text-lg font-semibold mb-4">Occupancy Trends</h3>
+                        <canvas id="occupancyTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Heatmap and Tables -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Occupancy Heatmap -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Weekly Occupancy Heatmap</h3>
+                        <div class="heatmap-container" id="occupancyHeatmap">
+                            <!-- Heatmap will be generated by JavaScript -->
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>Low</span>
+                            <span>High</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Performers -->
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-4">Top Performing Beds</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="badge badge-vip">VIP</div>
+                                    <span class="font-medium">Bed #17</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-green-600">€4,500</div>
+                                    <div class="text-xs text-gray-500">30 bookings</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="badge badge-vip">VIP</div>
+                                    <span class="font-medium">Bed #18</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-green-600">€4,200</div>
+                                    <div class="text-xs text-gray-500">28 bookings</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="badge badge-info">Pool</div>
+                                    <span class="font-medium">Bed #12</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-green-600">€2,850</div>
+                                    <div class="text-xs text-gray-500">30 bookings</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="badge badge-info">Pool</div>
+                                    <span class="font-medium">Bed #11</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-green-600">€2,755</div>
+                                    <div class="text-xs text-gray-500">29 bookings</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page-section" id="settings">
+            <div class="p-6">
+                <div class="mb-6">
+                    <h1 class="section-title">System Settings</h1>
+                    <p class="section-subtitle">Configure your BuBo Beach management system</p>
+                </div>
+
+                <!-- Settings Sections -->
+                <div class="space-y-4">
+                    <!-- General Settings -->
+                    <div class="settings-section">
+                        <div class="settings-header" onclick="toggleSettingsSection('general')">
+                            <span class="font-semibold">General Settings</span>
+                            <svg class="w-5 h-5 transform transition-transform" id="general-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="settings-content active" id="general-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Business Name</label>
+                                    <input type="text" class="form-input" value="BuBo Beach Club">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Location</label>
+                                    <input type="text" class="form-input" value="Costa del Sol, Spain">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Operating Hours</label>
+                                    <div class="flex space-x-2">
+                                        <input type="time" class="form-input" value="09:00">
+                                        <span class="flex items-center px-2">to</span>
+                                        <input type="time" class="form-input" value="20:00">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Maximum Capacity</label>
+                                    <input type="number" class="form-input" value="31">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Currency</label>
+                                    <select class="form-input">
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="USD">USD ($)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Language</label>
+                                    <select class="form-input">
+                                        <option value="es">Español</option>
+                                        <option value="en">English</option>
+                                        <option value="fr">Français</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Management -->
+                    <div class="settings-section">
+                        <div class="settings-header" onclick="toggleSettingsSection('users')">
+                            <span class="font-semibold">User Management</span>
+                            <svg class="w-5 h-5 transform transition-transform" id="users-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="settings-content" id="users-content">
+                            <div class="mb-4">
+                                <button class="btn-primary px-4 py-2">Add New User</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                            JD
+                                        </div>
+                                        <div>
+                                            <div class="font-medium">John Doe</div>
+                                            <div class="text-sm text-gray-500">john@bubobeach.com</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <span class="badge badge-success">Admin</span>
+                                        <div class="toggle-switch active"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                            AM
+                                        </div>
+                                        <div>
+                                            <div class="font-medium">Ana Martínez</div>
+                                            <div class="text-sm text-gray-500">ana@bubobeach.com</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <span class="badge badge-info">Manager</span>
+                                        <div class="toggle-switch active"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                            CL
+                                        </div>
+                                        <div>
+                                            <div class="font-medium">Carlos López</div>
+                                            <div class="text-sm text-gray-500">carlos@bubobeach.com</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <span class="badge badge-warning">Staff</span>
+                                        <div class="toggle-switch active"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing & Inventory -->
+                    <div class="settings-section">
+                        <div class="settings-header" onclick="toggleSettingsSection('pricing')">
+                            <span class="font-semibold">Pricing & Inventory</span>
+                            <svg class="w-5 h-5 transform transition-transform" id="pricing-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="settings-content" id="pricing-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Standard Bed Price</label>
+                                    <div class="flex">
+                                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">€</span>
+                                        <input type="number" class="form-input rounded-l-none" value="85">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Pool Area Premium</label>
+                                    <div class="flex">
+                                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">€</span>
+                                        <input type="number" class="form-input rounded-l-none" value="95">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">VIP Experience</label>
+                                    <div class="flex">
+                                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">€</span>
+                                        <input type="number" class="form-input rounded-l-none" value="150">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Walk-in Discount</label>
+                                    <div class="flex">
+                                        <input type="number" class="form-input rounded-r-none" value="10">
+                                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-l-0 border-gray-300 rounded-r-md">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <h4 class="font-semibold mb-4">Additional Services</h4>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span>Premium Champagne</span>
+                                        <div class="flex items-center space-x-4">
+                                            <span class="font-semibold">€45</span>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span>Premium Towels</span>
+                                        <div class="flex items-center space-x-4">
+                                            <span class="font-semibold">€15</span>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span>Gourmet Menu</span>
+                                        <div class="flex items-center space-x-4">
+                                            <span class="font-semibold">€35</span>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="settings-section">
+                        <div class="settings-header" onclick="toggleSettingsSection('notifications')">
+                            <span class="font-semibold">Notifications</span>
+                            <svg class="w-5 h-5 transform transition-transform" id="notifications-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="settings-content" id="notifications-content">
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="font-semibold mb-4">WhatsApp Integration</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">API Token</label>
+                                            <input type="password" class="form-input" placeholder="Enter WhatsApp API token">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Phone Number</label>
+                                            <input type="tel" class="form-input" value="+34 123 456 789">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-semibold mb-4">Email Settings</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">SMTP Server</label>
+                                            <input type="text" class="form-input" value="smtp.gmail.com">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Port</label>
+                                            <input type="number" class="form-input" value="587">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Username</label>
+                                            <input type="email" class="form-input" value="noreply@bubobeach.com">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Password</label>
+                                            <input type="password" class="form-input" placeholder="Enter email password">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-semibold mb-4">Notification Preferences</h4>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Reservation Confirmations</div>
+                                                <div class="text-sm text-gray-500">Send confirmation messages to customers</div>
+                                            </div>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Payment Notifications</div>
+                                                <div class="text-sm text-gray-500">Notify staff of successful payments</div>
+                                            </div>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Daily Reports</div>
+                                                <div class="text-sm text-gray-500">Send daily summary reports</div>
+                                            </div>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security -->
+                    <div class="settings-section">
+                        <div class="settings-header" onclick="toggleSettingsSection('security')">
+                            <span class="font-semibold">Security & Backup</span>
+                            <svg class="w-5 h-5 transform transition-transform" id="security-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="settings-content" id="security-content">
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="font-semibold mb-4">Authentication</h4>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Two-Factor Authentication</div>
+                                                <div class="text-sm text-gray-500">Require 2FA for all admin accounts</div>
+                                            </div>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Session Timeout</div>
+                                                <div class="text-sm text-gray-500">Auto-logout after inactivity</div>
+                                            </div>
+                                            <select class="form-input w-32">
+                                                <option value="30">30 min</option>
+                                                <option value="60">1 hour</option>
+                                                <option value="120">2 hours</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-semibold mb-4">Data Backup</h4>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Automatic Backups</div>
+                                                <div class="text-sm text-gray-500">Daily automated data backups</div>
+                                            </div>
+                                            <div class="toggle-switch active"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium">Last Backup</div>
+                                                <div class="text-sm text-gray-500">Today at 03:00 AM</div>
+                                            </div>
+                                            <button class="btn-secondary px-4 py-2">Backup Now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="font-semibold mb-4">Activity Logs</h4>
+                                    <div class="space-y-2 max-h-64 overflow-y-auto">
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                                            <span>User login: john@bubobeach.com</span>
+                                            <span class="text-gray-500">2 hours ago</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                                            <span>Settings updated: Pricing configuration</span>
+                                            <span class="text-gray-500">1 day ago</span>
+                                        </div>
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm">
+                                            <span>New user added: carlos@bubobeach.com</span>
+                                            <span class="text-gray-500">3 days ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="mt-8 flex justify-end">
+                    <button class="btn-primary px-8 py-3 font-semibold">Save All Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <div class="flex items-center">
+            <div class="mr-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="font-medium" id="notificationTitle">Success</div>
+                <div class="text-sm" id="notificationMessage">Operation completed successfully</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedBed = null;
+        let currentTime = new Date();
+        let currentPage = 'dashboard';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Set current date
+            const today = new Date().toISOString().split('T')[0];
+            const dateFilter = document.getElementById('dateFilter');
+            if (dateFilter) {
+                dateFilter.value = today;
+            }
+
+            // Start clock
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Initialize navigation
+            initializeNavigation();
+
+            // Initialize reservations
+            initializeReservations();
+
+            // Initialize charts
+            initializeCharts();
+
+            // Initialize settings
+            initializeSettings();
+
+            // Initialize mobile menu
+            initializeMobileMenu();
+
+            // Update counts
+            updateCounts();
+        }
+
+        // Clock functionality
+        function updateClock() {
+            currentTime = new Date();
+            const timeString = currentTime.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            const clockElement = document.getElementById('currentTime');
+            if (clockElement) {
+                clockElement.textContent = timeString;
+            }
+        }
+
+        // Navigation
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.dataset.page;
+                    if (page) {
+                        switchPage(page);
+                    }
+                });
+            });
+        }
+
+        function switchPage(page) {
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(page).classList.add('active');
+
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                reservations: 'Reservations',
+                analytics: 'Analytics',
+                settings: 'Settings'
+            };
+
+            const subtitles = {
+                dashboard: 'Welcome to BuBo Beach Management',
+                reservations: 'Manage bed reservations and floor plan',
+                analytics: 'Business insights and performance metrics',
+                settings: 'Configure your system preferences'
+            };
+
+            document.getElementById('pageTitle').textContent = titles[page];
+            document.getElementById('pageSubtitle').textContent = subtitles[page];
+
+            currentPage = page;
+        }
+
+        // Mobile menu
+        function initializeMobileMenu() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+
+                // Close sidebar when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                        sidebar.classList.remove('open');
+                    }
+                });
+            }
+        }
+
+        // Reservations functionality
+        function initializeReservations() {
+            const daybeds = document.querySelectorAll('.daybed');
+            const tooltip = document.getElementById('tooltip');
+
+            daybeds.forEach(bed => {
+                bed.addEventListener('mouseenter', (e) => {
+                    showTooltip(e, bed);
+                });
+
+                bed.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+
+                bed.addEventListener('click', () => {
+                    const status = getStatus(bed);
+                    if (status === 'available' || status === 'walk-in') {
+                        selectBed(bed);
+                    }
+                });
+            });
+
+            // Filters
+            const zoneFilter = document.getElementById('zoneFilter');
+            const statusFilter = document.getElementById('statusFilter');
+
+            if (zoneFilter) zoneFilter.addEventListener('change', applyFilters);
+            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+
+            // Reservation form
+            const reservationForm = document.getElementById('quickReservationForm');
+            if (reservationForm) {
+                reservationForm.addEventListener('submit', handleReservationSubmit);
+            }
+        }
+
+        function showTooltip(e, bed) {
+            const tooltip = document.getElementById('tooltip');
+            if (!tooltip) return;
+
+            const bedNum = bed.dataset.bed;
+            const price = bed.dataset.price;
+            const capacity = bed.dataset.capacity;
+            const isVip = bed.dataset.vip === 'true';
+            const status = getStatus(bed);
+            
+            let statusText = '';
+            let statusClass = '';
+            switch(status) {
+                case 'available': 
+                    statusText = 'Available'; 
+                    statusClass = 'badge-success';
+                    break;
+                case 'reserved': 
+                    statusText = 'Reserved'; 
+                    statusClass = 'badge-error';
+                    break;
+                case 'walk-in': 
+                    statusText = 'Walk-in Available'; 
+                    statusClass = 'badge-info';
+                    break;
+            }
+            
+            tooltip.innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold">Bed #${bedNum}</span>
+                        ${isVip ? '<span class="badge badge-vip">VIP</span>' : ''}
+                    </div>
+                    <div class="text-sm opacity-80">
+                        <div>Capacity: ${capacity} guests</div>
+                        <div>Price: €${price}/day</div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="badge ${statusClass}">${statusText}</span>
+                    </div>
+                    ${status === 'available' ? '<div class="text-xs mt-2 opacity-60">Click to reserve</div>' : ''}
+                </div>
+            `;
+            
+            tooltip.style.left = e.pageX + 10 + 'px';
+            tooltip.style.top = e.pageY - 10 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('show');
+            }
+        }
+
+        function getStatus(bed) {
+            if (bed.classList.contains('reserved')) return 'reserved';
+            if (bed.classList.contains('walk-in')) return 'walk-in';
+            return 'available';
+        }
+
+        function selectBed(bed) {
+            // Clear previous selection
+            document.querySelectorAll('.daybed').forEach(b => b.classList.remove('selected'));
+            
+            // Select new bed
+            bed.classList.add('selected');
+            selectedBed = bed;
+            
+            showSelectionSummary(bed);
+            showReservationForm(bed);
+        }
+
+        function showSelectionSummary(bed) {
+            const summaryElement = document.getElementById('selectionSummary');
+            const summaryContent = document.getElementById('summaryContent');
+            
+            if (!summaryElement || !summaryContent) return;
+
+            const bedNum = bed.dataset.bed;
+            const price = bed.dataset.price;
+            const capacity = bed.dataset.capacity;
+            const isVip = bed.dataset.vip === 'true';
+            const status = getStatus(bed);
+            
+            summaryContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold">Bed #${bedNum}</span>
+                        ${isVip ? '<span class="badge badge-vip">VIP</span>' : ''}
+                    </div>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div>Capacity: ${capacity} guests</div>
+                        <div>Price: €${price}/day</div>
+                        <div>Status: ${status === 'walk-in' ? 'Walk-in Available' : 'Available'}</div>
+                    </div>
+                </div>
+            `;
+            
+            summaryElement.classList.remove('hidden');
+        }
+
+        function showReservationForm(bed) {
+            const formElement = document.getElementById('reservationForm');
+            const totalPriceElement = document.getElementById('formTotalPrice');
+            
+            if (!formElement || !totalPriceElement) return;
+
+            const price = bed.dataset.price;
+            totalPriceElement.textContent = `€${price}`;
+            formElement.classList.remove('hidden');
+        }
+
+        function clearSelection() {
+            if (selectedBed) {
+                selectedBed.classList.remove('selected');
+                selectedBed = null;
+            }
+            
+            const summaryElement = document.getElementById('selectionSummary');
+            const formElement = document.getElementById('reservationForm');
+            
+            if (summaryElement) summaryElement.classList.add('hidden');
+            if (formElement) formElement.classList.add('hidden');
+        }
+
+        function applyFilters() {
+            const zoneFilter = document.getElementById('zoneFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            
+            if (!zoneFilter || !statusFilter) return;
+
+            const zoneValue = zoneFilter.value;
+            const statusValue = statusFilter.value;
+            
+            const daybeds = document.querySelectorAll('.daybed');
+            
+            daybeds.forEach(bed => {
+                let showBed = true;
+                
+                // Zone filter
+                if (zoneValue !== 'all') {
+                    const bedZone = bed.dataset.zone;
+                    if (bedZone !== zoneValue) {
+                        showBed = false;
+                    }
+                }
+                
+                // Status filter
+                if (statusValue !== 'all') {
+                    const bedStatus = getStatus(bed);
+                    if (bedStatus !== statusValue) {
+                        showBed = false;
+                    }
+                }
+                
+                bed.style.display = showBed ? 'flex' : 'none';
+            });
+            
+            updateCounts();
+        }
+
+        function updateCounts() {
+            const daybeds = document.querySelectorAll('.daybed');
+            const visibleBeds = Array.from(daybeds).filter(bed => bed.style.display !== 'none');
+            const available = visibleBeds.filter(bed => getStatus(bed) === 'available').length;
+            const reserved = visibleBeds.filter(bed => getStatus(bed) === 'reserved').length;
+            
+            const availableElement = document.getElementById('availableCount');
+            const reservedElement = document.getElementById('reservedCount');
+            
+            if (availableElement) availableElement.textContent = available;
+            if (reservedElement) reservedElement.textContent = reserved;
+        }
+
+        function handleReservationSubmit(e) {
+            e.preventDefault();
+            
+            if (!selectedBed) return;
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<div class="loading-spinner"></div> Processing...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Show success notification
+                showNotification('Reservation Confirmed', 'Customer will receive confirmation via WhatsApp and email.', 'success');
+                
+                // Mark bed as reserved
+                selectedBed.classList.remove('available', 'walk-in');
+                selectedBed.classList.add('reserved');
+                selectedBed.innerHTML = '<span class="font-bold">' + selectedBed.dataset.bed + '</span><span class="text-xs opacity-80">Reserved</span>';
+                
+                clearSelection();
+                updateCounts();
+                
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Reset form
+                e.target.reset();
+            }, 2000);
+        }
+
+        // Charts
+        function initializeCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [2100, 2400, 1800, 2800, 3200, 4100, 3800],
+                            borderColor: '#C89B4E',
+                            backgroundColor: 'rgba(200, 155, 78, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '€' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Revenue by Zone Chart
+            const revenueByZoneCtx = document.getElementById('revenueByZoneChart');
+            if (revenueByZoneCtx) {
+                new Chart(revenueByZoneCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['VIP Area', 'Pool Area', 'West Side', 'East Side'],
+                        datasets: [{
+                            data: [35, 30, 20, 15],
+                            backgroundColor: [
+                                '#0F172A',
+                                '#0EA5E9',
+                                '#C89B4E',
+                                '#10B981'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Occupancy Trend Chart
+            const occupancyTrendCtx = document.getElementById('occupancyTrendChart');
+            if (occupancyTrendCtx) {
+                new Chart(occupancyTrendCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                        datasets: [{
+                            label: 'Occupancy %',
+                            data: [72, 68, 85, 78],
+                            backgroundColor: '#10B981'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Generate heatmap
+            generateOccupancyHeatmap();
+        }
+
+        function generateOccupancyHeatmap() {
+            const heatmapContainer = document.getElementById('occupancyHeatmap');
+            if (!heatmapContainer) return;
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const hours = ['9', '11', '13', '15', '17', '19'];
+            
+            // Generate sample data
+            const data = [];
+            for (let day = 0; day < 7; day++) {
+                for (let hour = 0; hour < 6; hour++) {
+                    const occupancy = Math.floor(Math.random() * 100);
+                    data.push({
+                        day: days[day],
+                        hour: hours[hour],
+                        occupancy: occupancy
+                    });
+                }
+            }
+
+            heatmapContainer.innerHTML = '';
+            
+            data.forEach(item => {
+                const cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                cell.textContent = item.occupancy + '%';
+                
+                // Color based on occupancy
+                if (item.occupancy < 30) {
+                    cell.style.backgroundColor = '#FEF3C7';
+                    cell.style.color = '#92400E';
+                } else if (item.occupancy < 60) {
+                    cell.style.backgroundColor = '#FDE68A';
+                    cell.style.color = '#92400E';
+                } else if (item.occupancy < 80) {
+                    cell.style.backgroundColor = '#F59E0B';
+                    cell.style.color = 'white';
+                } else {
+                    cell.style.backgroundColor = '#D97706';
+                    cell.style.color = 'white';
+                }
+                
+                cell.title = `${item.day} ${item.hour}:00 - ${item.occupancy}% occupancy`;
+                heatmapContainer.appendChild(cell);
+            });
+        }
+
+        // Settings
+        function initializeSettings() {
+            // Toggle switches
+            const toggleSwitches = document.querySelectorAll('.toggle-switch');
+            toggleSwitches.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    toggle.classList.toggle('active');
+                });
+            });
+        }
+
+        function toggleSettingsSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const arrow = document.getElementById(sectionId + '-arrow');
+            
+            if (content && arrow) {
+                content.classList.toggle('active');
+                arrow.classList.toggle('rotate-180');
+            }
+        }
+
+        // Notifications
+        function showNotification(title, message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const titleElement = document.getElementById('notificationTitle');
+            const messageElement = document.getElementById('notificationMessage');
+            
+            if (!notification || !titleElement || !messageElement) return;
+
+            titleElement.textContent = title;
+            messageElement.textContent = message;
+            
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                clearSelection();
+            }
+            
+            // Page navigation shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        switchPage('dashboard');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        switchPage('reservations');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        switchPage('analytics');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        switchPage('settings');
+                        break;
+                }
+            }
+        });
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            if (currentPage === 'dashboard') {
+                // Simulate data updates
+                updateDashboardMetrics();
+            }
+        }, 30000);
+
+        function updateDashboardMetrics() {
+            // Simulate real-time updates
+            const revenue = document.getElementById('totalRevenue');
+            const occupancy = document.getElementById('occupancyRate');
+            const reservations = document.getElementById('activeReservations');
+            
+            if (revenue) {
+                const currentRevenue = parseInt(revenue.textContent.replace('€', '').replace(',', ''));
+                const newRevenue = currentRevenue + Math.floor(Math.random() * 200);
+                revenue.textContent = '€' + newRevenue.toLocaleString();
+            }
+            
+            if (occupancy) {
+                const rates = [75, 76, 77, 78, 79, 80];
+                occupancy.textContent = rates[Math.floor(Math.random() * rates.length)] + '%';
+            }
+        }
+
+        // Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974dbab683dcf77d',t:'MTc1NjE1MjU5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

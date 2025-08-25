@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>BuBo Beach - Management System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -40,6 +40,7 @@
             -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         .glass-card {
@@ -59,6 +60,11 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 12px rgba(200, 155, 78, 0.2);
             cursor: pointer;
+            min-height: 44px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-primary:hover {
@@ -74,6 +80,11 @@
             font-weight: 500;
             transition: all 0.2s ease;
             cursor: pointer;
+            min-height: 44px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-secondary:hover {
@@ -89,6 +100,11 @@
             font-weight: 500;
             transition: all 0.2s ease;
             cursor: pointer;
+            min-height: 44px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-ghost:hover {
@@ -104,6 +120,7 @@
             background: var(--surface);
             font-size: 14px;
             width: 100%;
+            min-height: 44px;
         }
 
         .form-input:focus {
@@ -122,11 +139,14 @@
             left: 0;
             top: 0;
             z-index: 40;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .main-content {
             margin-left: 280px;
             min-height: 100vh;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: calc(100% - 280px);
         }
 
         .header {
@@ -148,6 +168,7 @@
             transition: all 0.2s ease;
             border-radius: 12px;
             margin: 4px 0;
+            min-height: 48px;
         }
 
         .nav-link:hover {
@@ -165,6 +186,7 @@
             width: 20px;
             height: 20px;
             margin-right: 12px;
+            flex-shrink: 0;
         }
 
         .metric-card {
@@ -173,6 +195,10 @@
             border-radius: 16px;
             padding: 24px;
             transition: all 0.2s ease;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .metric-card:hover {
@@ -183,12 +209,14 @@
         .metric-card-large {
             background: linear-gradient(135deg, var(--accent), #D4A853);
             color: white;
-            height: 140px;
+            min-height: 140px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            border-radius: 16px;
+            padding: 24px;
         }
 
         .page-section {
@@ -214,7 +242,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
             margin-bottom: 32px;
         }
@@ -254,6 +282,7 @@
             justify-content: center;
             margin-right: 16px;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .activity-icon.success {
@@ -342,6 +371,7 @@
             border: 1px solid transparent;
             backdrop-filter: blur(20px);
             overflow: hidden;
+            touch-action: manipulation;
         }
 
         .daybed.available {
@@ -474,10 +504,11 @@
             border-bottom: 1px solid var(--border);
             cursor: pointer;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             font-weight: 600;
             transition: background 0.2s ease;
+            min-height: 60px;
         }
 
         .settings-header:hover {
@@ -501,6 +532,7 @@
             position: relative;
             cursor: pointer;
             transition: background 0.3s ease;
+            flex-shrink: 0;
         }
 
         .toggle-switch.active {
@@ -540,6 +572,7 @@
             justify-content: center;
             font-size: 12px;
             font-weight: 500;
+            min-height: 40px;
         }
 
         .heatmap-cell:hover {
@@ -560,32 +593,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-2px); }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        .daybed.available::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            animation: shimmer 3s infinite;
-        }
-
         .notification {
             position: fixed;
             top: 20px;
@@ -598,6 +605,7 @@
             z-index: 1000;
             transform: translateX(400px);
             transition: transform 0.3s ease;
+            max-width: 90vw;
         }
 
         .notification.show {
@@ -616,10 +624,13 @@
             border-left: 4px solid var(--warning);
         }
 
-        @media (max-width: 768px) {
+        /* Mobile First Responsive Design */
+        @media (max-width: 1024px) {
             .sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                width: 100%;
+                max-width: 320px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             }
 
             .sidebar.open {
@@ -628,14 +639,282 @@
 
             .main-content {
                 margin-left: 0;
+                width: 100%;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 0 16px;
+            }
+
+            .metric-card, .metric-card-large {
+                min-height: 120px;
+                padding: 20px;
+            }
+
+            .chart-container {
+                height: 300px;
+                margin: 0 16px;
             }
 
             .floor-plan {
                 height: 500px;
+                margin: 16px;
+                overflow: auto;
+            }
+
+            .daybed {
+                width: 48px;
+                height: 72px;
+                font-size: 10px;
+            }
+
+            .pool {
+                left: 30%;
+                top: 25%;
+                width: 40%;
+                height: 35%;
+            }
+
+            .deck {
+                border-radius: 12px;
+            }
+
+            .reservations-sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .reservations-main {
+                width: 100%;
+                height: auto;
+            }
+
+            .reservations-flex {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .px-6 {
+                padding-left: 16px !important;
+                padding-right: 16px !important;
+            }
+
+            .p-6 {
+                padding: 16px !important;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .section-subtitle {
+                font-size: 14px;
+            }
+
+            .weather-temp {
+                font-size: 28px;
+            }
+
+            .activity-feed {
+                max-height: 300px;
+            }
+
+            .activity-item {
+                padding: 12px;
+            }
+
+            .activity-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+
+            .header {
+                padding: 12px 16px;
+            }
+
+            .time-display {
+                font-size: 14px;
+            }
+
+            .settings-header {
+                padding: 16px 20px;
+                min-height: 56px;
+            }
+
+            .settings-content {
+                padding: 20px;
+            }
+
+            .heatmap-cell {
+                min-height: 32px;
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 0 12px;
+            }
+
+            .metric-card-large {
+                min-height: 100px;
+                padding: 16px;
+            }
+
+            .metric-card-large .text-4xl {
+                font-size: 28px;
+            }
+
+            .metric-card .text-3xl {
+                font-size: 24px;
+            }
+
+            .floor-plan {
+                height: 400px;
+                margin: 12px;
+            }
+
+            .daybed {
+                width: 40px;
+                height: 60px;
+                font-size: 9px;
+            }
+
+            .pool {
+                left: 25%;
+                top: 30%;
+                width: 50%;
+                height: 30%;
+            }
+
+            .chart-container {
+                height: 250px;
+                margin: 0 12px;
+                padding: 16px;
+            }
+
+            .glass-card {
+                margin: 0 12px;
+                padding: 16px !important;
+            }
+
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                transform: translateY(-100px);
+            }
+
+            .notification.show {
+                transform: translateY(0);
+            }
+
+            .tooltip {
+                min-width: 200px;
+                font-size: 12px;
+                padding: 16px;
+            }
+        }
+
+        /* Landscape orientation fixes */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .floor-plan {
+                height: 350px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .metric-card-large {
+                min-height: 80px;
+                padding: 12px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .daybed {
+                min-height: 48px;
+                min-width: 48px;
+            }
+
+            .nav-link {
+                min-height: 52px;
+            }
+
+            .toggle-switch {
+                width: 56px;
+                height: 32px;
+            }
+
+            .toggle-switch::after {
+                width: 28px;
+                height: 28px;
+                top: 2px;
+                left: 2px;
+            }
+
+            .toggle-switch.active::after {
+                transform: translateX(24px);
+            }
+
+            .activity-item {
+                min-height: 60px;
+            }
+
+            .settings-header {
+                min-height: 60px;
+            }
+        }
+
+        /* Reservations page specific mobile styles */
+        .reservations-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .reservations-sidebar {
+            width: 320px;
+            background: white;
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .reservations-main {
+            flex: 1;
+            padding: 24px;
+            overflow: auto;
+        }
+
+        @media (max-width: 1024px) {
+            .reservations-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .reservations-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 16px;
+            }
+
+            .reservations-main {
+                padding: 16px;
             }
         }
     </style>
@@ -698,7 +977,7 @@
         <header class="header">
             <div class="px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <button class="btn-ghost p-2 md:hidden" id="sidebarToggle">
+                    <button class="btn-ghost p-2 lg:hidden" id="sidebarToggle">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -710,7 +989,7 @@
                 </div>
                 
                 <div class="flex items-center space-x-6">
-                    <div class="text-right">
+                    <div class="text-right hidden sm:block">
                         <div class="text-sm text-gray-500">Current Time</div>
                         <div id="currentTime" class="time-display"></div>
                     </div>
@@ -719,7 +998,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H4l5-5v5z"></path>
                         </svg>
-                        Export
+                        <span class="hidden sm:inline">Export</span>
                     </button>
                 </div>
             </div>
@@ -858,11 +1137,11 @@
 
         <!-- Reservations Page -->
         <div class="page-section" id="reservations">
-            <div class="flex h-full">
+            <div class="reservations-container">
                 <!-- Reservations Sidebar -->
-                <div class="w-80 bg-white border-r border-gray-200 p-6 space-y-6 overflow-y-auto">
+                <div class="reservations-sidebar">
                     <!-- Metrics Overview -->
-                    <div class="space-y-4">
+                    <div class="space-y-4 mb-6">
                         <h3 class="text-lg font-semibold">Overview</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="metric-card text-center">
@@ -877,7 +1156,7 @@
                     </div>
 
                     <!-- Filters -->
-                    <div class="glass-card p-6">
+                    <div class="glass-card p-6 mb-6">
                         <h3 class="text-lg font-semibold mb-4">Filters</h3>
                         
                         <div class="space-y-4">
@@ -910,7 +1189,7 @@
                     </div>
 
                     <!-- Legend -->
-                    <div class="glass-card p-6">
+                    <div class="glass-card p-6 mb-6">
                         <h3 class="text-lg font-semibold mb-4">Legend</h3>
                         <div class="space-y-3">
                             <div class="flex items-center">
@@ -933,7 +1212,7 @@
                     </div>
 
                     <!-- Selection Summary -->
-                    <div id="selectionSummary" class="glass-card p-6 hidden">
+                    <div id="selectionSummary" class="glass-card p-6 mb-6 hidden">
                         <h3 class="text-lg font-semibold mb-4" style="color: var(--accent);">Selected Bed</h3>
                         <div id="summaryContent"></div>
                     </div>
@@ -1005,7 +1284,7 @@
                 </div>
 
                 <!-- Floor Plan -->
-                <div class="flex-1 p-6">
+                <div class="reservations-main">
                     <div class="glass-card p-6 h-full">
                         <div class="flex justify-between items-center mb-6">
                             <div>
@@ -1785,6 +2064,12 @@
             document.getElementById('pageSubtitle').textContent = subtitles[page];
 
             currentPage = page;
+
+            // Close mobile sidebar
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.remove('open');
+            }
         }
 
         // Mobile menu
@@ -1793,15 +2078,28 @@
             const sidebar = document.getElementById('sidebar');
 
             if (sidebarToggle && sidebar) {
-                sidebarToggle.addEventListener('click', () => {
+                sidebarToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     sidebar.classList.toggle('open');
                 });
 
                 // Close sidebar when clicking outside
                 document.addEventListener('click', (e) => {
-                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    if (sidebar.classList.contains('open') && 
+                        !sidebar.contains(e.target) && 
+                        !sidebarToggle.contains(e.target)) {
                         sidebar.classList.remove('open');
                     }
+                });
+
+                // Close sidebar when clicking nav links on mobile
+                const navLinks = sidebar.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth <= 1024) {
+                            sidebar.classList.remove('open');
+                        }
+                    });
                 });
             }
         }
@@ -1820,7 +2118,8 @@
                     hideTooltip();
                 });
 
-                bed.addEventListener('click', () => {
+                bed.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const status = getStatus(bed);
                     if (status === 'available' || status === 'walk-in') {
                         selectBed(bed);
@@ -1882,12 +2181,28 @@
                     <div class="flex items-center">
                         <span class="badge ${statusClass}">${statusText}</span>
                     </div>
-                    ${status === 'available' ? '<div class="text-xs mt-2 opacity-60">Click to reserve</div>' : ''}
+                    ${status === 'available' || status === 'walk-in' ? '<div class="text-xs mt-2 opacity-60">Click to reserve</div>' : ''}
                 </div>
             `;
             
-            tooltip.style.left = e.pageX + 10 + 'px';
-            tooltip.style.top = e.pageY - 10 + 'px';
+            // Position tooltip
+            const rect = bed.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            
+            let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+            let top = rect.top - tooltipRect.height - 10;
+            
+            // Keep tooltip in viewport
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            if (top < 10) {
+                top = rect.bottom + 10;
+            }
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
             tooltip.classList.add('show');
         }
 
@@ -2008,7 +2323,7 @@
         function updateCounts() {
             const daybeds = document.querySelectorAll('.daybed');
             const visibleBeds = Array.from(daybeds).filter(bed => bed.style.display !== 'none');
-            const available = visibleBeds.filter(bed => getStatus(bed) === 'available').length;
+            const available = visibleBeds.filter(bed => getStatus(bed) === 'available' || getStatus(bed) === 'walk-in').length;
             const reserved = visibleBeds.filter(bed => getStatus(bed) === 'reserved').length;
             
             const availableElement = document.getElementById('availableCount');
@@ -2250,6 +2565,11 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 clearSelection();
+                // Close mobile sidebar
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) {
+                    sidebar.classList.remove('open');
+                }
             }
             
             // Page navigation shortcuts
@@ -2301,6 +2621,14 @@
             }
         }
 
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 1024 && sidebar) {
+                sidebar.classList.remove('open');
+            }
+        });
+
         // Service Worker for PWA functionality
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -2314,5 +2642,5 @@
             });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974dbab683dcf77d',t:'MTc1NjE1MjU5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974e02f766daec8e',t:'MTc1NjE1NTU0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
